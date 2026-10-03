@@ -1,0 +1,24 @@
+# À chaque push : installe la base et les comptes dans leur état initial,
+# applique votre sql/correction.sql, puis lance verifier.php.
+# Au départ (correction vide), la vérification échoue : c'est normal.
+name: verifier
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  mysql:
+    runs-on: ubuntu-latest
+    env:
+      DB_SOCKET: /var/run/mysqld/mysqld.sock
+      DB_ADMIN: root
+      DB_ADMIN_PASS: root      # compte root du MySQL préinstallé sur le runner
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3', extensions: pdo_mysql }
+      - run: sudo systemctl start mysql
+      - run: php installer.php
+      - run: php appliquer.php sql/correction.sql
+      - run: php verifier.php
