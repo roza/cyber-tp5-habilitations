@@ -1,11 +1,17 @@
 # À chaque push : installe la base et les comptes dans leur état initial,
 # applique votre sql/correction.sql, puis lance verifier.php.
 # Au départ (correction vide), la vérification échoue : c'est normal.
+# Le compteur (« 6 / 10 contrôles réussis ») apparaît en statut du commit
+# (✓ / ✗ à côté du dernier commit) et dans le résumé de l'exécution.
 name: verifier
 
 on:
   push:
   pull_request:
+
+permissions:
+  contents: read
+  statuses: write     # publier le compteur en statut du commit
 
 jobs:
   mysql:
@@ -15,10 +21,18 @@ jobs:
       DB_ADMIN: root
       DB_ADMIN_PASS: root      # compte root du MySQL préinstallé sur le runner
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with: { php-version: '8.3', extensions: pdo_mysql }
       - run: sudo systemctl start mysql
       - run: php installer.php
       - run: php appliquer.php sql/correction.sql
-      - run: php verifier.php
+      - run: |
+          set -o pipefail
+          php verifier.php | tee verification.txt
+      - name: Résumé de la vérification
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python3 .github/resume-verification.py verification.txt

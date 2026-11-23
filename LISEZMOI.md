@@ -56,6 +56,17 @@ minutes). Les mêmes commandes fonctionnent ensuite dans le terminal, sans
 `sql/correction.sql` et lance `verifier.php` (onglet **Actions**). **Au départ,
 la vérification échoue : c'est normal.** Le TP est terminé quand elle est verte.
 
+**Pour suivre votre progression**, sur la page d'accueil de votre dépôt,
+cliquez sur la croix rouge ✗ (ou la coche verte ✓) à côté du dernier commit,
+au-dessus de la liste des fichiers. La ligne **Habilitations** indique le
+nombre de contrôles réussis, par exemple « 6 / 10 contrôles réussis ».
+Cliquez sur **Details** : le **résumé** de l'exécution, en bas de la page,
+liste les contrôles encore [KO] et leur explication.
+
+La CI vérifie le fichier `sql/correction.sql` **tel qu'il est dans le dépôt**,
+rejoué sur une base neuve : une correction faite à la main dans phpMyAdmin
+ou dans le terminal, sans être reportée dans ce fichier, reste rouge.
+
 ## Les comptes
 
 | Compte | Mot de passe | Usage |
